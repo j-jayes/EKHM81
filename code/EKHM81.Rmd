@@ -98,7 +98,6 @@ jpeg(
     width = 4,
     units = "in",
     res = 1000
-    
 )
 
 g %>% 
@@ -110,7 +109,9 @@ g %>%
     gghighlight(flag == 1, calculate_per_facet = TRUE) +
     scale_color_brewer(palette = "Dark2") +
     theme(panel.grid = element_blank()) +
-    scale_x_continuous(guide = guide_axis(check.overlap = TRUE))
+    scale_x_continuous(guide = guide_axis(check.overlap = TRUE)) +
+    labs(y = "",
+         x = "Year")
 
 dev.off()
 
@@ -241,7 +242,10 @@ Sweden_evolution <- df %>%
     pivot_wider(names_from = indicator) %>% 
     select(-country)
 
-tmp_date_sweden <- Sweden_evolution %>% sample_frac(0.4)
+tmp_date_sweden <- Sweden_evolution %>% sample_frac(0.4) 
+
+tmp_name_sweden <- Sweden_evolution %>% drop_na() %>% filter(year == max(year)) %>% 
+    mutate(country = "Denmark")
 
 Spain_evolution <- df %>% 
     filter(country == "Greece") %>% 
@@ -251,7 +255,8 @@ Spain_evolution <- df %>%
 
 tmp_date_spain <- Spain_evolution %>% sample_frac(0.4)
 
-
+tmp_name_spain <- Spain_evolution %>% drop_na() %>% filter(year == max(year)) %>% 
+    mutate(country = "Greece")
 
 
 ggplot() +
@@ -259,6 +264,8 @@ ggplot() +
                 aes(x=`Total fertility rate`, y=`Mean age at first marriage - females`), color="#1B9E77") +
      geom_text_repel(data=tmp_date_sweden, 
                      aes(x=`Total fertility rate`, y=`Mean age at first marriage - females`, label = year)) +
+    geom_label_repel(data=tmp_name_sweden, 
+                     aes(x=`Total fertility rate`, y=`Mean age at first marriage - females`, label = country)) +
      geom_segment(data = Sweden_evolution, 
                   color="#1B9E77", 
                   aes(x=`Total fertility rate`, 
@@ -269,6 +276,8 @@ ggplot() +
                 aes(x=`Total fertility rate`, y=`Mean age at first marriage - females`), color="#D95F02") +
     geom_text_repel(data=tmp_date_spain, 
                      aes(x=`Total fertility rate`, y=`Mean age at first marriage - females`, label = year)) +
+    geom_label_repel(data=tmp_name_spain, 
+                     aes(x=`Total fertility rate`, y=`Mean age at first marriage - females`, label = country)) +
     geom_segment(data = Spain_evolution, 
                   color="#D95F02", 
                   aes(x=`Total fertility rate`, 
@@ -305,6 +314,10 @@ Sweden_evolution <- df %>%
 
 tmp_date_sweden <- Sweden_evolution %>% sample_frac(0.4)
 
+tmp_name_sweden <- Sweden_evolution %>% drop_na() %>% filter(year == max(year)) %>% 
+    mutate(country = "Denmark")
+
+
 Spain_evolution <- df %>% 
     filter(country == "Greece") %>% 
     filter(indicator %in% c("Total fertility rate", "Tertiary education female")) %>% 
@@ -313,7 +326,8 @@ Spain_evolution <- df %>%
 
 tmp_date_spain <- Spain_evolution %>% sample_frac(0.4)
 
-
+tmp_name_spain <- Spain_evolution %>% drop_na() %>% filter(year == max(year)) %>% 
+    mutate(country = "Greece")
 
 
 ggplot() +
@@ -321,6 +335,8 @@ ggplot() +
                 aes(x=`Total fertility rate`, y=`Tertiary education female`), color="#1B9E77") +
      geom_text_repel(data=tmp_date_sweden, 
                      aes(x=`Total fertility rate`, y=`Tertiary education female`, label = year)) +
+    geom_label_repel(data=tmp_name_sweden, 
+                     aes(x=`Total fertility rate`, y=`Tertiary education female`, label = country)) +
      geom_segment(data = Sweden_evolution, 
                   color="#1B9E77", 
                   aes(x=`Total fertility rate`, 
@@ -331,13 +347,16 @@ ggplot() +
                 aes(x=`Total fertility rate`, y=`Tertiary education female`), color="#D95F02") +
     geom_text_repel(data=tmp_date_spain, 
                      aes(x=`Total fertility rate`, y=`Tertiary education female`, label = year)) +
+    geom_label_repel(data=tmp_name_spain, 
+                     aes(x=`Total fertility rate`, y=`Tertiary education female`, label = country)) +
     geom_segment(data = Spain_evolution, 
                   color="#D95F02", 
                   aes(x=`Total fertility rate`, 
                       y=`Tertiary education female`,
                       xend=c(tail(`Total fertility rate`, n=-1), NA), 
                       yend=c(tail(`Tertiary education female`, n=-1), NA)), arrow=arrow(length=unit(0.3,"cm"))) +
-    labs(caption = "Data: Eurostat")
+    labs(caption = "Data: Eurostat") +
+    geom_vline(xintercept = 1.3, lty = 2)
 
 ```
 
@@ -356,6 +375,9 @@ Sweden_evolution <- df %>%
 
 tmp_date_sweden <- Sweden_evolution %>% sample_frac(0.4)
 
+tmp_name_sweden <- Sweden_evolution %>% drop_na() %>% filter(year == max(year)) %>% 
+    mutate(country = "Denmark")
+
 Spain_evolution <- df %>% 
     filter(country == "Greece") %>% 
     filter(indicator %in% c("Total fertility rate", "Proportion of live births outside marriage")) %>% 
@@ -364,14 +386,24 @@ Spain_evolution <- df %>%
 
 tmp_date_spain <- Spain_evolution %>% sample_frac(0.4)
 
+tmp_name_spain <- Spain_evolution %>% drop_na() %>% filter(year == max(year)) %>% 
+    mutate(country = "Greece")
 
-
+jpeg(
+    filename = "figures/den_gre_births_ouside_marraige.jpeg",
+    height = 6,
+    width = 8,
+    units = "in",
+    res = 1000
+)
 
 ggplot() +
      geom_point(data = Sweden_evolution,
                 aes(x=`Total fertility rate`, y=`Proportion of live births outside marriage`), color="#1B9E77") +
      geom_text_repel(data=tmp_date_sweden, 
                      aes(x=`Total fertility rate`, y=`Proportion of live births outside marriage`, label = year)) +
+     geom_label_repel(data=tmp_name_sweden, 
+                     aes(x=`Total fertility rate`, y=`Proportion of live births outside marriage`, label = country)) +
      geom_segment(data = Sweden_evolution, 
                   color="#1B9E77", 
                   aes(x=`Total fertility rate`, 
@@ -382,13 +414,18 @@ ggplot() +
                 aes(x=`Total fertility rate`, y=`Proportion of live births outside marriage`), color="#D95F02") +
     geom_text_repel(data=tmp_date_spain, 
                      aes(x=`Total fertility rate`, y=`Proportion of live births outside marriage`, label = year)) +
+    geom_label_repel(data=tmp_name_spain, 
+                     aes(x=`Total fertility rate`, y=`Proportion of live births outside marriage`, label = country)) +
     geom_segment(data = Spain_evolution, 
                   color="#D95F02", 
                   aes(x=`Total fertility rate`, 
                       y=`Proportion of live births outside marriage`,
                       xend=c(tail(`Total fertility rate`, n=-1), NA), 
                       yend=c(tail(`Proportion of live births outside marriage`, n=-1), NA)), arrow=arrow(length=unit(0.3,"cm"))) +
-    labs(caption = "Data: Eurostat")
+    labs(caption = "Data: Eurostat") +
+    geom_vline(xintercept = 1.3, lty = 2)
+
+dev.off()
 
 ```
 
@@ -415,7 +452,10 @@ Spain_evolution <- df %>%
 
 tmp_date_spain <- Spain_evolution %>% sample_frac(0.4)
 
-
+df %>% 
+    filter(country == "Greece") %>% 
+    filter(indicator == "Proportion of live births outside marriage") %>% 
+    arrange(desc(year))
 
 
 ggplot() +
